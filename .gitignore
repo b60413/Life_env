@@ -1,0 +1,5 @@
+mongodb/bin
+mongodb/README
+www/*
+.vagrant
+.project
