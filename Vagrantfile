@@ -3,7 +3,9 @@ Vagrant::Config.run do |config|
 	config.vm.define :web do |web_config|
 		web_config.vm.box = "Web"
 		web_config.vm.share_folder "puppet_files", "/etc/puppet/files", "puppet/files"
+		web_config.vm.share_folder "ssl", "/etc/apache2/ssl", "puppet/files/apache2/ssl"
 		web_config.vm.share_folder "www", "/var/www", "www"
+		web_config.vm.share_folder "mongodb", "/usr/local/mongodb", "mongodb"
 		web_config.vm.network :hostonly, "192.168.100.2"
 		web_config.vm.host_name = "Web"
 		
@@ -13,15 +15,43 @@ Vagrant::Config.run do |config|
 		end
 	end
 	
-	#Life Database Config
-	config.vm.define :db do |db_config|
-		db_config.vm.box = "Database"
-		db_config.vm.share_folder "puppet_files", "/etc/puppet/files", "puppet/files"
-		db_config.vm.share_folder "mongodb", "/usr/local/mongodb", "mongodb"
-		db_config.vm.network :hostonly, "192.168.100.3"
-		db_config.vm.host_name = "Database"
+	#Life Database(include MySQL,mongodb_1) Config
+	#config.vm.define :db do |db_config|
+	#	db_config.vm.box = "Database"
+	#	db_config.vm.share_folder "puppet_files", "/etc/puppet/files", "puppet/files"
+	#	db_config.vm.share_folder "mongodb", "/usr/local/mongodb", "mongodb"
+	#	db_config.vm.network :hostonly, "192.168.100.3"
+	#	db_config.vm.host_name = "Database"
 		
-		db_config.vm.provision :puppet do |puppet|
+	#	db_config.vm.provision :puppet do |puppet|
+	#		puppet.manifests_path = "puppet/manifests"
+	#		puppet,module_path = "puppet/modules"
+	#	end
+	#end
+	
+	#Life Mongo Database 1 Config
+	config.vm.define :mongodb1 do |mongodb1_config|
+		mongodb1_config.vm.box = "Web"
+		mongodb1_config.vm.share_folder "puppet_files", "/etc/puppet/files", "puppet/files"
+		#mongodb1_config.vm.share_folder "mongodb", "/usr/local/mongodb", "mongodb"
+		mongodb1_config.vm.network :hostonly, "192.168.100.4"
+		mongodb1_config.vm.host_name = "Mongodb1"
+		
+		mongodb1_config.vm.provision :puppet do |puppet|
+			puppet.manifests_path = "puppet/manifests"
+			puppet,module_path = "puppet/modules"
+		end
+	end
+	
+	#Life Mongo Database 2 Config
+	config.vm.define :mongodb2 do |mongodb2_config|
+		mongodb2_config.vm.box = "Web"
+		mongodb2_config.vm.share_folder "puppet_files", "/etc/puppet/files", "puppet/files"
+		#mongodb2_config.vm.share_folder "mongodb", "/usr/local/mongodb", "mongodb"
+		mongodb2_config.vm.network :hostonly, "192.168.100.5"
+		mongodb2_config.vm.host_name = "Mongodb2"
+		
+		mongodb2_config.vm.provision :puppet do |puppet|
 			puppet.manifests_path = "puppet/manifests"
 			puppet,module_path = "puppet/modules"
 		end

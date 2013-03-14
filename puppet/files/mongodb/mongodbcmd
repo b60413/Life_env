@@ -1,0 +1,19 @@
+#!/bin/sh
+
+rm -rf /var/lib/mongodb
+rm -rf /var/log/mongodb
+
+mkdir -p /var/lib/mongodb/0
+mkdir -p /var/lib/mongodb/1
+mkdir -p /var/lib/mongodb/config
+mkdir -p /var/lib/mongodb/arbiter
+mkdir -p /var/lib/mongodb/arbiter2
+mkdir -p /var/log/mongodb/
+
+cp /etc/puppet/files/mongodb/*.conf /home/vagrant/
+cp /etc/puppet/files/mongodb/mongodbkey1 /home/vagrant/mongodbkey1
+
+chmod 600 /home/vagrant/mongodbkey1
+
+mongod -f mongodb_arbiter.conf
+mongod -f mongodb_arbiter2.conf

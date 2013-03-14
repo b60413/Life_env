@@ -1,5 +1,6 @@
-$web_package = ["apache2", "php5", "php5-mysql", "php5-cli", "php5-curl", "php5-dev", "php-pear", "libapache2-mod-php5", "phpmyadmin", "git", "ruby", "libcompass-ruby1.8", "ruby-compass"]
+$web_package = ["apache2", "memcached", "php5", "php5-mysql", "php5-cli", "php5-curl", "php5-dev", "php-pear", "php5-memcache", "libapache2-mod-php5", "phpmyadmin", "git", "ruby", "libcompass-ruby1.8", "ruby-compass"]
 $db_package = ["mysql-server"]
+$mongodb_package = ["mongodb-10gen"]
 
 node base {
 	$web_host_name = "life.localhost"
@@ -16,10 +17,14 @@ node base {
 	
 	exec {
 		"apt-get update" :
-			command => "apt-get update";
+			command => "apt-get update",
+			require => File["/etc/apt/sources.list.d/10gen.list"];
 		
 		"ntpdate" :
 			command => "ntpdate time.stdtime.gov.tw";
+		
+		"mongodb GPG Key":
+			command => "apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10";
 	}
 	
 	file {
@@ -30,6 +35,14 @@ node base {
 			group => "root",
 			mode => 0644,
 			notify => Exec["ntpdate"];
+		
+		#Set mongodb apt download site
+		"/etc/apt/sources.list.d/10gen.list" :
+			source => "/etc/puppet/files/apt/sources.list.d/10gen.list",
+			owner => "root",
+			group => "root",
+			mode => 0644,
+			require => Exec["mongodb GPG Key"];
 	}
 }
 
@@ -45,9 +58,23 @@ node "Web" inherits base{
 	exec {
 		#Install PHP Mongodb Driver
 		"install-mongo" :
-		unless => "test -e /usr/lib/php5/20090626/mongo.so && echo 'yes'",
+			unless => "test -e /usr/lib/php5/20090626/mongo.so && echo 'yes'",
 			command => "pecl install mongo",
 			require => Package["php-pear"];
+			
+		#Enable Apache SSL Module
+		"enable-apache-ssl" :
+			unless => "test -e /etc/apache2/mods-enabled/ssl.load && echo 'yes'",
+			command => "a2enmod ssl",
+			require => Package["apache2"],
+			notify => Service["apache2"];
+			
+		#Link Apache SSL Site Config
+		"link-ssl-site" :
+			unless => "test -e /etc/apache2/sites-enabled/default-ssl && echo 'yes'",
+			command => "ln -s /etc/apache2/sites-available/default-ssl /etc/apache2/sites-enabled/default-ssl",
+			require => [File["/etc/apache2/sites-available/default-ssl"], Package["apache2"]],
+			notify => Service["apache2"];
 	}
 	
 	file {
@@ -86,6 +113,15 @@ node "Web" inherits base{
 			mode => 0600,
 			require => Package["apache2"],
 			notify => Service["apache2"];
+		
+		#Set SSL Virtual Host
+		"/etc/apache2/sites-available/default-ssl" :
+			content => template("/etc/puppet/files/apache2/sites-available/default-ssl.erb"),
+			owner => "root",
+			group => "root",
+			mode => 0600,
+			require => Package["apache2"],
+			notify => [Exec["link-ssl-site"], Service["apache2"]];
 		
 		#Set Rewrite Module Load
 		"/etc/apache2/mods-enabled/rewrite.load" :
@@ -166,5 +202,35 @@ node "Database" inherits base{
 		"mysql" :
 			ensure => "running",
 			enable => true;
+	}
+}
+
+node "Mongodb1" inherits base{
+	package {
+		$mongodb_package :
+			ensure => "installed",
+			require => Exec["apt-get update"];
+	}
+	
+	service {
+		"mongodb" :
+			ensure => "stopped",
+			enable => true,
+			require => Package["mongodb-10gen"];
+	}
+}
+
+node "Mongodb2" inherits base{
+	package {
+		$mongodb_package :
+			ensure => "installed",
+			require => Exec["apt-get update"];
+	}
+	
+	service {
+		"mongodb" :
+			ensure => "stopped",
+			enable => true,
+			require => Package["mongodb-10gen"];
 	}
 }
