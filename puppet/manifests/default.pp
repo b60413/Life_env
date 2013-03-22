@@ -1,4 +1,4 @@
-$web_package = ["apache2", "memcached", "php5", "php5-mysql", "php5-cli", "php5-curl", "php5-dev", "php-pear", "php5-memcache", "libapache2-mod-php5", "phpmyadmin", "git", "ruby", "libcompass-ruby1.8", "ruby-compass"]
+$web_package = ["apache2", "memcached", "php5", "php5-mysql", "php5-cli", "php5-curl", "php5-dev", "php-pear", "php5-memcache", "php5-sqlite", "libapache2-mod-php5", "phpmyadmin", "git", "ruby", "libcompass-ruby1.8", "ruby-compass"]
 $db_package = ["mysql-server"]
 $mongodb_package = ["mongodb-10gen"]
 
