@@ -32,6 +32,22 @@
 </VirtualHost>
 
 <VirtualHost *:80>
+        DocumentRoot /var/www/life/project/kobayashi
+        ServerName kobayashi.localhost
+
+        <Directory /var/www/life/project/kobayashi>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        </Directory>
+
+        ErrorLog ${APACHE_LOG_DIR}/kobayashi_error.log
+        LogLevel warn
+        CustomLog ${APACHE_LOG_DIR}/kobayashi_access.log combined
+</VirtualHost>
+
+<VirtualHost *:80>
         DocumentRoot /var/www/life2
         ServerName life2.localhost
 
