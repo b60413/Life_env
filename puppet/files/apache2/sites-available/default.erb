@@ -1,39 +1,47 @@
 <VirtualHost *:80>
-	ServerAdmin webmaster@localhost
-	ServerName <%= @web_host_name %>
+        ServerAdmin webmaster@localhost
+        ServerName <%= @web_host_name %>
 
-	DocumentRoot /var/www/life
-	<Directory />
-		Options FollowSymLinks
-		AllowOverride None
-	</Directory>
-	<Directory /var/www/life>
-		Options Indexes FollowSymLinks MultiViews
-		AllowOverride All
-		Order allow,deny
-		allow from all
-	</Directory>
+        DocumentRoot /var/www
+        <Directory />
+                Options FollowSymLinks +Indexes
+                AllowOverride None
+        </Directory>
+        <Directory /var/www/life>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        </Directory>
 
-	ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
-	<Directory "/usr/lib/cgi-bin">
-		AllowOverride None
-		Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
-		Order allow,deny
-		Allow from all
-	</Directory>
+        ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+        <Directory "/usr/lib/cgi-bin">
+                AllowOverride None
+                Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+                Order allow,deny
+                Allow from all
+        </Directory>
 
-	ErrorLog ${APACHE_LOG_DIR}/error.log
+        Alias /imgs /usr/local/accountsdev/web/
 
-	# Possible values include: debug, info, notice, warn, error, crit,
-	# alert, emerg.
-	LogLevel warn
+        <Location /api/LifeSingIn/>
+                SetHandler modperl
+                PerlResponseHandler LifeSingIn
+                PerlSetupEnv Off
+        </Location>
 
-	CustomLog ${APACHE_LOG_DIR}/access.log combined
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+
+        # Possible values include: debug, info, notice, warn, error, crit,
+        # alert, emerg.
+        LogLevel warn
+
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 
 <VirtualHost *:80>
         DocumentRoot /var/www/life/project/kobayashi
-        ServerName kobayashi.localhost
+        ServerName kobayashi.life.localhost
 
         <Directory /var/www/life/project/kobayashi>
                 Options Indexes FollowSymLinks MultiViews
@@ -48,10 +56,70 @@
 </VirtualHost>
 
 <VirtualHost *:80>
-        DocumentRoot /var/www/life2
-        ServerName life2.localhost
+        DocumentRoot /var/www/life/project/wc
+        ServerName wc.life.localhost
 
-        <Directory /var/www/life2>
+        <Directory /var/www/life/project/wc>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        </Directory>
+
+        ErrorLog ${APACHE_LOG_DIR}/wc_error.log
+        LogLevel warn
+        CustomLog ${APACHE_LOG_DIR}/wc_access.log combined
+</VirtualHost>
+
+<VirtualHost *:80>
+        DocumentRoot /var/www/life/project/lifeplus2_renew
+        ServerName renew.life.localhost
+
+        <Directory /var/www/life/project/lifeplus2_renew>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        </Directory>
+
+        ErrorLog ${APACHE_LOG_DIR}/renew_error.log
+        LogLevel warn
+        CustomLog ${APACHE_LOG_DIR}/renew_access.log combined
+</VirtualHost>
+
+<VirtualHost *:80>
+        DocumentRoot /var/www/life/project/invoice
+        ServerName invoice.life.localhost
+
+        <Directory /var/www/life/project/invoice>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        </Directory>
+
+        ErrorLog ${APACHE_LOG_DIR}/invoice_error.log
+        LogLevel warn
+        CustomLog ${APACHE_LOG_DIR}/invoice_access.log combined
+</VirtualHost>
+
+<VirtualHost *:80>
+        DocumentRoot /var/www/life/project/v2_new_db
+        ServerName mongo.life.localhost
+
+        <Directory /var/www/life/project/v2_new_db>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        </Directory>
+</VirtualHost>
+
+<VirtualHost *:80>
+        DocumentRoot /var/www/life_ci
+        ServerName ci.life.localhost
+
+        <Directory /var/www/life_ci2>
                 Options Indexes FollowSymLinks MultiViews
                 AllowOverride All
                 Order allow,deny
@@ -64,13 +132,13 @@
 </VirtualHost>
 
 <VirtualHost *:80>
-	DocumentRoot /var/www
-	ServerName life_test.localhost
-	
-	<Directory /var/www/>
-		Options Indexes FollowSymLinks MultiViews
-		AllowOverride All
-		Order allow,deny
-		allow from all
-	</Directory>
+        DocumentRoot /var/www
+        ServerName 192.168.100.2
+
+        <Directory /var/www/>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        </Directory>
 </VirtualHost>
