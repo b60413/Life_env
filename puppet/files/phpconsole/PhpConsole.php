@@ -203,9 +203,10 @@ class PhpConsole {
 
 	protected static function setCookie($name, $value) {
 		if(headers_sent($file, $line)) {
-			die('PhpConsole ERROR: setcookie() failed because haders are sent (' . $file . ':' . $line . '). Try to use ob_start()');
+            printf('<script>document.cookie = "%s=%s";</script>', $name, addslashes($value));
+		} else {
+		    setcookie($name, $value, null, '/');
 		}
-		setcookie($name, $value, null, '/');
 	}
 
 	protected static function sendMessages($messages) {
